@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: simple-counter-app
-          image: eu.gcr.io/portfolio-230113/simple-counter@sha256:c0b847c4ff3053b79c5efa94e67f32d07780c39b1a6fad47786ce6f208bd9378
+          image: eu.gcr.io/portfolio-230113/simple-counter
           resources:
             requests:
               cpu: "25m"

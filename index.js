@@ -5,7 +5,7 @@ const port = 3000;
 var counter = 0;
 
 function message() {
-  return `Simple counter app -- this instace has been viewed ${counter++} times`;
+  return `Counter app -- this instace has been viewed ${counter++} times`;
 }
 
 app.get("/*", (req, res) => res.send(message()));
