@@ -7,6 +7,11 @@ build:
   stage: build
   variables:
     DOCKER_IMAGE_TAG: "eu.gcr.io/${PROJECT_ID}/${APP_NAME}"
+  artifacts:
+    paths:
+      - sha256.txt
+    untracked: true
+    expire_in: 2 days
   script:
     - echo "${SERVICE_ACCOUNT_KEY}" | docker login -u _json_key --password-stdin https://eu.gcr.io
     - docker pull "${DOCKER_IMAGE_TAG}:latest"
