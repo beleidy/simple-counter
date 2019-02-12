@@ -8,10 +8,11 @@ build:
   variables:
     DOCKER_IMAGE_TAG: "eu.gcr.io/${PROJECT_ID}/${APP_NAME}"
   script:
-    - docker build -t "${DOCKER_IMAGE_TAG}" .
-    - echo "${SERVICE_ACCOUNT_KEY}" > key.json
-    - docker login -u _json_key --password-stdin https://eu.gcr.io < key.json
-    - docker push ${DOCKER_IMAGE_TAG}
+    - echo "${SERVICE_ACCOUNT_KEY}" | docker login -u _json_key --password-stdin https://eu.gcr.io
+    - docker pull "${DOCKER_IMAGE_TAG}:latest"
+    - docker build --cache-from ${DOCKER_IMAGE_TAG:latest} -t "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}" -t "${DOCKER_IMAGE_TAG}:latest" .
+    - docker push "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}"
+    - docker inspect --format='{{index .Id }}' "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}" > sha256.txt
   only:
     - master
 
@@ -21,6 +22,7 @@ deploy:
   script:
     - apk add gettext
     - gcloud components install kubectl
+    - export SHA256=$(cat sha256.txt)
     - envsubst < ./k8s/${APP_NAME}-deployment.tmp.yaml > ./k8s/${APP_NAME}-deployment.yaml
     - envsubst < ./k8s/${APP_NAME}-service.tmp.yaml > ./k8s/${APP_NAME}-service.yaml
     - echo "${SERVICE_ACCOUNT_KEY}" > key.json
