@@ -17,6 +17,7 @@ build:
     - docker pull "${DOCKER_IMAGE_TAG}:latest"
     - docker build --cache-from ${DOCKER_IMAGE_TAG:latest} -t "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}" -t "${DOCKER_IMAGE_TAG}:latest" .
     - docker push "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}"
+    - docker push "${DOCKER_IMAGE_TAG}:latest"
     - docker inspect --format='{{index .Id }}' "${DOCKER_IMAGE_TAG}:${CI_COMMIT_SHA}" > sha256.txt
   only:
     - master
