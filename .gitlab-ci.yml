@@ -24,15 +24,15 @@ deploy:
   script:
     - apk add gettext
     - gcloud components install kubectl
-    - export SHA256=$(gcloud container images describe ${DOCKER_IMAGE_TAG}:latest  --format='value(image_summary.digest)')
-    - envsubst < ./k8s/${APP_NAME}-deployment.tmp.yaml > ./k8s/${APP_NAME}-deployment.yaml
-    - envsubst < ./k8s/${APP_NAME}-service.tmp.yaml > ./k8s/${APP_NAME}-service.yaml
     - echo "${SERVICE_ACCOUNT_KEY}" > key.json
     - gcloud auth activate-service-account --key-file=key.json
     - gcloud config set project ${PROJECT_ID}
     - gcloud config set container/cluster ${CLUSTER_NAME}
     - gcloud config set compute/zone europe-west2-a
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --zone europe-west2-a
+    - export SHA256=$(gcloud container images describe ${DOCKER_IMAGE_TAG}:latest  --format='value(image_summary.digest)')
+    - envsubst < ./k8s/${APP_NAME}-deployment.tmp.yaml > ./k8s/${APP_NAME}-deployment.yaml
+    - envsubst < ./k8s/${APP_NAME}-service.tmp.yaml > ./k8s/${APP_NAME}-service.yaml
     - kubectl apply -f k8s/${APP_NAME}-deployment.yaml
     - kubectl apply -f k8s/${APP_NAME}-service.yaml
   only:
